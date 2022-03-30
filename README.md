@@ -19,19 +19,33 @@ SELECT year(order_date) as aasta, count(*) as 'tellimuste arv' FROM d110077sd465
 
 -- ul 21.5
 
-select year(order_date) as aasta, count(*) as 'tellimuste arv', round(sum(price),2) as 'müükide summa' from orders left join books on orders.book_id = books.id group by year(orders.order_date);
+select year(order_date) as aasta, count(*) as 'tellimuste arv', round(sum(price),2) as 'müükide summa' from orders
+
+left join books on orders.book_id = books.id group by year(orders.order_date);
 
 -- ul 21.6
 
-select count(*) as 'tellimuste arv', sum(books.price) as 'müükide summa' from orders left join books on orders.book_id = books.id where year(order_date) = 2017;
+select count(*) as 'tellimuste arv', sum(books.price) as 'müükide summa' from orders
+
+left join books on orders.book_id = books.id where year(order_date) = 2017;
 
 -- ul 21.7
 
-select count(*), sum(price), clients.username from clients left join orders on orders.client_id = clients.id left join books on orders.book_id = books.id where year(orders.order_date) = 2017 group by clients.id order by sum(price) desc;
+select count(*), sum(price), clients.username from clients
+
+left join orders on orders.client_id = clients.id
+
+left join books on orders.book_id = books.id where year(orders.order_date) = 2017
+
+group by clients.id order by sum(price) desc;
 
 -- ul 21.8
 
-select books, title, books.price, count(*) from orders left join books on books.id = orders.book_id group by book_id order by count(*) desc limit 10;
+select books, title, books.price, count(*) from orders
+
+left join books on books.id = orders.book_id
+
+group by book_id order by count(*) desc limit 10;
 
 -- ul 22.1
 
@@ -51,11 +65,21 @@ Select case when type='new' then 'uus' when type ='used' then 'kasutatud' when t
 
 -- ül 22.5
 
-select title, price, type from books where type='used' and price > (select avg(price) from books where type='new') order by price desc;
+select title, price, type from books
+
+where type='used' and price > (select avg(price) from books where type='new') order by price desc;
 
 -- ül 22.6
 
-select * from books where price > (select avg(price) from authors left join book_authors on book_authors.author_id = authors.id left join books on books.id = book_authors.book_id left join orders on  orders.book_id = books.id group by authors.id order by count(*) desc limit 1);
+select * from books where price > (select avg(price) from authors
+
+left join book_authors on book_authors.author_id = authors.id
+
+left join books on books.id = book_authors.book_id
+
+left join orders on  orders.book_id = books.id
+
+group by authors.id order by count(*) desc limit 1);
 
 -- ul 22.7
 
@@ -81,16 +105,23 @@ delete from orders where id=2300;
 
 insert into clients (username, first_name, last_name, email, address) 
 values
-	('eesl', 'fqaa', 'kasa', 'isane@gmail.com', 'teat'),
-	('ecel', 'fasa', 'kata', 'emane@gmail.com', 'teat'),
-    ('evel', 'fara', 'kara', 'teane@gmail.com', 'teat'),
-    ('etel', 'fava', 'kawa', 'emaane@gmail.com', 'teat');
+
+('eesl', 'fqaa', 'kasa', 'isane@gmail.com', 'teat'),
+	
+('ecel', 'fasa', 'kata', 'emane@gmail.com', 'teat'),
+	
+('evel', 'fara', 'kara', 'teane@gmail.com', 'teat'),
+    
+('etel', 'fava', 'kawa', 'emaane@gmail.com', 'teat');
     
 -- ul 23.5
 
 select id from books where title ='Vendetta';
+
 select id from clients where username ='mcage1o';
+
 insert into orders (delivery_address, order_date, status, client_id, book_id)
+
 values ('tomatotown', '2005.05.05', 'ordered', (select id from clients where username ='mcage1o'), (select id from books where title ='Vendetta'));
 
 -- ul 23.6
@@ -101,3 +132,25 @@ set price = price*1.05, pages = pages -5 where books.id > 0;
 -- ul 23.7
 
 delete from authors where id in (select authors.id from authors left join book_authors on authors.id = book_authors.author_id where book_authors.id is null);
+
+-- KT ul 1
+
+insert into books (title, release_date, cover_path, language, summary, price, stock_saldo, pages, type)
+
+values 
+
+   ('Raamat1', '2017', 'http://dummyimage.com/242x210.png/5fa2dd/ffffff', 'Eesti', 'tere', 25, '200', 12 , 'used'),
+
+   ('Raamat2', '2018', 'http://dummyimage.com/242x210.png/5ea2dd/ffffff', 'Vene', 'Ei', 26, '201', 13 , 'new');
+	   
+-- KT ul 2 (kliendi kasutajanimi, raamatute nimed)
+
+select clients.username, books.title
+
+from clients
+
+left join orders on orders.client_id = clients.id
+
+left join books on orders.book_id = books.id
+
+where orders.id is not null;
